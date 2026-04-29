@@ -18,7 +18,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r reuirements.txt
           pip install dvc
 
       # 🔍 Debug (optional but useful)
