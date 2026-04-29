@@ -1,0 +1,36 @@
+name: CI pipeline
+
+on: push
+
+jobs:
+  project-testing:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with: 
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install dvc
+
+      # 🔍 Debug (optional but useful)
+      - name: Debug DVC
+        run: |
+          dvc remote list
+          dvc status
+
+      # 🔥 IMPORTANT: Pull data from DVC remote
+      - name: Pull DVC data
+        run: dvc pull
+
+      # 🚀 Run pipeline
+      - name: Run DVC pipeline
+        run: dvc repro
