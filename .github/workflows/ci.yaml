@@ -32,3 +32,8 @@ jobs:
         env:
           CI_MLOPS: ${{secrets.CI_MLOPS}}
         run: dvc repro
+      - name: Run model tests
+        env:
+          CI_MLOPS: ${{secrets.CI_MLOPS}}
+        run: |
+          python -m unittest tests/model_test.py

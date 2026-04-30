@@ -28,4 +28,48 @@ class TestModelLoading(unittest.TestCase):
     """unit test class to verify MLflow model loading from the Staging stage"""
     
     def test_model_in_staging(self):
-        """Test if the modelexists in the Staging Stage"""
+        """Test if the model exists in the Staging Stage"""
+
+        # Initialize the Mlflow client to interact with Mlflow server
+        client = MlflowClient()
+
+        # Retrive the latest versions of the models in the 'Staging' stage
+        versions = client.get_latest_versions(model_name,stages=["Staging"])
+
+        # Assert that at least one version of the model exists in the 'Staging' stage.
+        # If no versions are found,it will raise an error 
+        self.assertGreater(len(versions),0,"No model found in the 'Staging' stage")
+    def test_model_loading(self):
+        """Test if the model can be loaded properly from the Staging stage."""
+
+        # Initialize the Mlflow client again to interact with the server
+        client = MlflowClient() 
+        # Retrive the latest versions of the models in the 'Staging' stage
+        versions = client.get_latest_versions(model_name,stages=["Staging"])
+
+        # If no versions are found,fails the test and skip the modal loading part
+        if not versions:
+            self.fail("No model found in the 'Staging' stage,skipping model loading test.")
+
+            # get the version details of the latest model in the 'Staging' stage
+            latest_version = versions[0].version
+            run_id = versions[0].run_id
+
+            # construct the String needed to load the model using its run id
+            logged_model = f"runs:/{run_id}/{model_name}"
+
+            try:
+                # try to load the model from the specified path
+                loaded_model = mlflow.pyfunc.load_model(logged_model)
+            except Exception as e:
+                # If loading the modals fails,fail the test and output the error message
+                self.fail(f"Failed to load the model:{e}")
+
+            self.assertIsNotNone(loaded_model, "The loaded model is None")
+            print(f"Model successfully loaded from {logged_model}")
+    
+if __name__ == "__main__":
+    unittest.main()
+
+
+
