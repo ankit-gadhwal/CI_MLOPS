@@ -41,7 +41,7 @@ dagshub_url = "https://dagshub.com"
 repo_owner = "ankit-gadhwal"
 repo_name='CI_MLOPS'
 mlflow.set_tracking_uri(f"{dagshub_url}/{repo_owner}/{repo_name}.mlflow")
-mlflow.set_experiment("best_model")
+mlflow.set_experiment("best_Model")
 
 def load_data(filepath: str) -> pd.DataFrame:
     try:

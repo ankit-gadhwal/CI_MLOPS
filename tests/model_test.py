@@ -24,4 +24,8 @@ mlflow.set_tracking_uri(f"{dagshub_url}/{repo_owner}/{repo_name}.mlflow")
 # Specify the name of the model that we want to load and test
 model_name = "water_potability_final1"   ## registered model name 
 
-# Specify the name of the model that we want to load and test
+class TestModelLoading(unittest.TestCase):
+    """unit test class to verify MLflow model loading from the Staging stage"""
+    
+    def test_model_in_staging(self):
+        """Test if the modelexists in the Staging Stage"""
