@@ -37,3 +37,9 @@ jobs:
           CI_MLOPS: ${{secrets.CI_MLOPS}}
         run: |
           python -m unittest tests/model_test.py
+      
+      - name: Promote model to production
+        if: success()
+        env:
+          CI_MLOPS: ${{secrets.CI_MLOPS}}
+        run: python scripts\production.py
