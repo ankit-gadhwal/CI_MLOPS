@@ -10,7 +10,7 @@ client = MlflowClient()
 
 import os
 # load Dagshub token from environment variables
-dagshub_token = os.getenv("CI_MlOPS")
+dagshub_token = os.getenv("CI_MLOPS")
 if not dagshub_token:
     raise EnvironmentError("DAGSEUB_TOKEN environment variable is not set")
 
