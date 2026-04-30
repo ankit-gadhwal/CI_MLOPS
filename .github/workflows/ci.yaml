@@ -18,19 +18,11 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install -r reuirements.txt
+          pip install -r requirements.txt   
           pip install dvc
 
-      # 🔍 Debug (optional but useful)
-      - name: Debug DVC
-        run: |
-          dvc remote list
-          dvc status
+      - name: Check files
+        run: ls -R
 
-      # 🔥 IMPORTANT: Pull data from DVC remote
-      - name: Pull DVC data
-        run: dvc pull
-
-      # 🚀 Run pipeline
       - name: Run DVC pipeline
         run: dvc repro
