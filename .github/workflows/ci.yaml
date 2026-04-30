@@ -12,17 +12,21 @@ jobs:
 
       - name: Setup Python
         uses: actions/setup-python@v4
-        with: 
+        with:
           python-version: '3.10'
 
       - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install -r requirements.txt   
+          pip install -r requirements.txt
           pip install dvc
 
+      # 🔍 Debug (optional but useful)
       - name: Check files
-        run: ls -R
+        run: |
+          echo "Files in repo:"
+          ls -R
 
+      # 🚀 Run pipeline
       - name: Run DVC pipeline
         run: dvc repro
