@@ -42,4 +42,4 @@ jobs:
         if: success()
         env:
           CI_MLOPS: ${{secrets.CI_MLOPS}}
-        run: python scripts\production.py
+        run: python scripts/production.py
