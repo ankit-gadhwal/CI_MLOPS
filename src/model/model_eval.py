@@ -29,7 +29,7 @@ from mlflow.models import infer_signature
 
 import os
 # load Dagshub token from environment variables
-dagshub_token = os.getenv("DAGSHUB_TOKEN")
+dagshub_token = os.getenv("CI_MLOPS")
 if not dagshub_token:
     raise EnvironmentError("DAGSEUB_TOKEN environment variable is not set")
 
@@ -41,7 +41,7 @@ dagshub_url = "https://dagshub.com"
 repo_owner = "ankit-gadhwal"
 repo_name='CI_MLOPS'
 mlflow.set_tracking_uri(f"{dagshub_url}/{repo_owner}/{repo_name}.mlflow")
-mlflow.set_experiment("Final_model")
+mlflow.set_experiment("best_model")
 
 def load_data(filepath: str) -> pd.DataFrame:
     try:

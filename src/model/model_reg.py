@@ -10,7 +10,7 @@ client = MlflowClient()
 
 import os
 # load Dagshub token from environment variables
-dagshub_token = os.getenv("DAGSHUB_TOKEN")
+dagshub_token = os.getenv("CI_MlOPS")
 if not dagshub_token:
     raise EnvironmentError("DAGSEUB_TOKEN environment variable is not set")
 
@@ -22,7 +22,7 @@ dagshub_url = "https://dagshub.com"
 repo_owner = "ankit-gadhwal"
 repo_name='CI_MLOPS'
 mlflow.set_tracking_uri(f"{dagshub_url}/{repo_owner}/{repo_name}.mlflow")
-mlflow.set_experiment("Final_model_reg")
+mlflow.set_experiment("water_potability_final1")
 # 2. Load Run Info
 with open("reports/run_info.json", 'r') as f:
     run_info = json.load(f)
