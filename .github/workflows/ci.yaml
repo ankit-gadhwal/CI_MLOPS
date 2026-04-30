@@ -29,4 +29,6 @@ jobs:
 
       # 🚀 Run pipeline
       - name: Run DVC pipeline
+        env:
+          DAGSHUB_TOKEN:${{secrets.CI_MLOPS_ACTION}}
         run: dvc repro

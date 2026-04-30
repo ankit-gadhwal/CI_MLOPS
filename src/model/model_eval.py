@@ -15,17 +15,33 @@ from mlflow.models import infer_signature
 
 # Initialize DagsHub for experiment tracking
 # Initialize DagsHub for experiment tracking
-dagshub.init(repo_owner='ankit-gadhwal', repo_name='CI_MLOPS', mlflow=True)
+# dagshub.init(repo_owner='ankit-gadhwal', repo_name='CI_MLOPS', mlflow=True)
 
 # Set the experiment name in MLflow
 
-mlflow.set_experiment("DVC PIPELINE ")
+# mlflow.set_experiment("DVC PIPELINE ")
 
 # Set the tracking URI for MLflow to log the experiment in DagsHub
 
 
 
 #mlflow.set_experiment("water-potability-prediction")
+
+import os
+# load Dagshub token from environment variables
+dagshub_token = os.getenv("CI_MLops")
+if not dagshub_token:
+    raise EnvironmentError("DAGSEUB_TOKEN environment variable is not set")
+
+os.environ["MLFLOW_TRACKING_USERNAME"] = dagshub_token
+os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
+
+# DagsHub repository details
+dagshub_url = "https://dagshub.com"
+repo_owner = "ankit-gadhwal"
+repo_name='CI_MLOPS'
+mlflow.set_tracking_uri(f"{dagshub_url}/{repo_owner}/{repo_name}.mlflow")
+mlflow.set_experiment("Final_model")
 
 def load_data(filepath: str) -> pd.DataFrame:
     try:
@@ -127,7 +143,7 @@ def main():
             
             # Log the source code file
             mlflow.log_artifact(__file__)
-            mlflow.set_tracking_uri("https://dagshub.com/ankit-gadhwal/CI_MLOPS.mlflow") 
+            # mlflow.set_tracking_uri("https://dagshub.com/ankit-gadhwal/CI_MLOPS.mlflow") 
             signature = infer_signature(X_test,model.predict(X_test))
 
             mlflow.sklearn.log_model(model,"best_Model",signature=signature)
