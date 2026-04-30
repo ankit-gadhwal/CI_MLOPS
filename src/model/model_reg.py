@@ -6,7 +6,7 @@ from mlflow.tracking import MlflowClient
 # 1. Setup Authentication
 # dagshub.init(repo_owner='ankit-gadhwal', repo_name='CI_MLOPS', mlflow=True)
 # mlflow.set_tracking_uri("https://dagshub.com/ankit-gadhwal/CI_MLOPS.mlflow")
-# client = MlflowClient()
+client = MlflowClient()
 
 import os
 # load Dagshub token from environment variables
@@ -53,7 +53,7 @@ try:
     client.transition_model_version_stage(
         name=registry_name,
         version=str(version),
-        stage="production",
+        stage="staging",
         archive_existing_versions=True
     )
     print(f"🚀 Model {registry_name} v{version} is now in STAGING.")
