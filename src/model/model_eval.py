@@ -12,13 +12,14 @@ import mlflow.sklearn
 import dagshub
 import mlflow
 from mlflow.models import infer_signature
+import os
 
 # Initialize DagsHub for experiment tracking
 # Initialize DagsHub for experiment tracking
 # dagshub.init(repo_owner='ankit-gadhwal', repo_name='CI_MLOPS', mlflow=True)
 
-# Set the experiment name in MLflow
-
+# # Set the experiment name in MLflow
+# mlflow.set_tracking_uri("https://dagshub.com/ankit-gadhwal/CI_MLOPS.mlflow")
 # mlflow.set_experiment("DVC PIPELINE ")
 
 # Set the tracking URI for MLflow to log the experiment in DagsHub
@@ -27,8 +28,8 @@ from mlflow.models import infer_signature
 
 #mlflow.set_experiment("water-potability-prediction")
 
-import os
-# load Dagshub token from environment variables
+
+# # load Dagshub token from environment variables
 dagshub_token = os.getenv("CI_MLOPS")
 if not dagshub_token:
     raise EnvironmentError("DAGSEUB_TOKEN environment variable is not set")
@@ -36,12 +37,12 @@ if not dagshub_token:
 os.environ["MLFLOW_TRACKING_USERNAME"] = dagshub_token
 os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
 
-# DagsHub repository details
+# # DagsHub repository details
 dagshub_url = "https://dagshub.com"
 repo_owner = "ankit-gadhwal"
 repo_name='CI_MLOPS'
 mlflow.set_tracking_uri(f"{dagshub_url}/{repo_owner}/{repo_name}.mlflow")
-mlflow.set_experiment("best_Model")
+mlflow.set_experiment("DVC PIPELINE")
 
 def load_data(filepath: str) -> pd.DataFrame:
     try:
@@ -132,30 +133,42 @@ def main():
         X_test, y_test = prepare_data(test_data)
         model = load_model(model_path)
 
-        # Start MLflow run
         with mlflow.start_run() as run:
             metrics = evaluation_model(model, X_test, y_test, model_name)
             save_metrics(metrics, metrics_path)
 
-            # Log artifacts
-            mlflow.log_artifact(model_path)
+            # 1. Log metrics and code ONLY (DO NOT log model.pkl here)
             mlflow.log_artifact(metrics_path)
-            
-            # Log the source code file
             mlflow.log_artifact(__file__)
-            # mlflow.set_tracking_uri("https://dagshub.com/ankit-gadhwal/CI_MLOPS.mlflow") 
-            signature = infer_signature(X_test,model.predict(X_test))
+            
+            # 2. Log Model properly with signature
+            signature = infer_signature(X_test, model.predict(X_test))
+            
+            print("Uploading model to DagsHub...")
+            mlflow.sklearn.log_model(
+                sk_model=model,
+                artifact_path="best_Model", # This creates the FOLDER
+                signature=signature
+            )
 
-            mlflow.sklearn.log_model(model,"best_Model",signature=signature)
-
-            #Save run ID and model info to JSON File
+            # 3. Save run ID info
             run_info = {'run_id': run.info.run_id, 'model_name': "best_Model"}
             reports_path = "reports/run_info.json"
+            os.makedirs("reports", exist_ok=True)
             with open(reports_path, 'w') as file:
                 json.dump(run_info, file, indent=4)
+            
+            print(f"✅ Run {run.info.run_id} completed.")
+            
+        # 4. CRITICAL: Wait 5 seconds after the 'with' block 
+        # to ensure the background upload thread finishes.
+        import time
+        print("Finalizing upload to DagsHub...")
+        time.sleep(5)
 
     except Exception as e:
-        raise Exception(f"An Error occurred: {e}")
+        print(f"❌ Error: {e}")
+        raise e
 
 if __name__ == "__main__":
     main()

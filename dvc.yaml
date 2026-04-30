@@ -30,8 +30,8 @@ stages:
     - src/model/model_eval.py
     metrics:
     - reports/metrics.json
-    outs:
-    - reports/run_info.json 
+  #   outs:
+  #   - reports/run_info.json 
 
   
   model_registration:
